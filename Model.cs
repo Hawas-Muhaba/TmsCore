@@ -53,3 +53,39 @@ public class Student
         : throw new ArgumentOutOfRangeException(nameof(value), "GPA must be between 0.0 and 4.0.");
     }
 }
+
+public interface IGradable
+{
+string Title { get; }
+decimal CalculateGrade();
+}
+
+
+public class Quiz : IGradable
+{
+    public required string Title {get; init;}
+    public required decimal CorrectAnswers { get; init; }
+    public required decimal TotalQuestions { get; init; }
+
+    public decimal CalculateGrade()
+    {
+        if(TotalQuestions == 0)
+        {
+            return 0m; // Avoid division by zero, treat as zero grade if no questions
+        }
+        return CorrectAnswers / TotalQuestions * 100m;
+    }
+
+}
+
+public class LabAssignment : IGradable
+{
+    public required string Title {get; init;}
+    public required decimal FunctionalityScore { get; init; }
+    public required decimal CodeQualityScore { get; init; }
+
+    public decimal CalculateGrade()
+    {
+        return (FunctionalityScore * 0.7m) + (CodeQualityScore * 0.3m);
+    }
+}
