@@ -146,3 +146,32 @@ foreach (var name in leaderboard)
 {
     Console.WriteLine(name);
 }
+
+decimal averageGpa = students.Average(s=> s.GPA);
+Console.WriteLine($"\n Class Average GPA: {averageGpa:F2}");
+
+var standingGroups = students.GroupBy(s=> s.GPA switch
+{
+    >= 3.5m => "Honors",
+    >= 2.5m => "Good Standing",
+    >= 2.0m => "Probation",
+    < 2.0m => "Academic Warning"
+});
+
+Console.WriteLine("\n---------------Academic Standing Report:----------------");
+foreach (var group in standingGroups)
+{
+    Console.WriteLine($"\n{group.Key} ({group.Count()}):");
+    foreach (var student in group)
+    {
+        Console.WriteLine($"- {student.Name} (GPA: {student.GPA:F2})");
+    }
+};
+
+
+string[] backendCourses = ["C#", "ASP.NET Core", "Entity Framework"];
+string[] frontendCourses = ["TypeScript", "Angular"];
+
+string[] allCourses = [..backendCourses, ..frontendCourses];
+
+Console.WriteLine($"\nFull curriculum: {string.Join(", ", allCourses)}");
