@@ -26,6 +26,56 @@
 // Console.WriteLine($"Total allocated (double): {totalAllocation:R}");
 
 
-decimal grantPerStudent = 1999.99m;
-decimal totalAllocation = grantPerStudent * 100_000;
-Console.WriteLine($"Total allocated (double): {totalAllocation}");
+// decimal grantPerStudent = 1999.99m;
+// decimal totalAllocation = grantPerStudent * 100_000;
+// Console.WriteLine($"Total allocated (double): {totalAllocation}");
+
+
+var enrollment = new EnrollmentRecord("STU-001", "CS-401", DateTime.UtcNow);
+Console.WriteLine(enrollment);
+var corrected = enrollment with { CourseCode = "CS-402" };
+Console.WriteLine(corrected);
+var duplicate = new EnrollmentRecord("STU-001", "CS-401", enrollment.EnrolledAt);
+Console.WriteLine($"Same data? {enrollment == duplicate}"); 
+
+var course = new Course {Code="CS-401", Title="Introduction to Computer Science", Capacity=30};
+Console.WriteLine($"Course: {course.Code} - {course.Title} (Capacity: {course.Capacity})");
+// Invalid capacity — should throw
+try
+{
+    course.Capacity =-5;
+}
+catch (ArgumentOutOfRangeException ex)
+{
+Console.WriteLine($"Caught: {ex.Message}");
+}
+// Invalid title — should throw
+try
+{
+    course.Title = "";
+}
+catch (ArgumentException ex)
+{
+Console.WriteLine($"Caught: {ex.Message}");
+}
+
+var student = new Student { Id = "STU-001", Name = "Abebe", Age = 20, GPA = 3.5m };
+Console.WriteLine($"Student: {student.Id} - {student.Name}, Age: {student.Age}, GPA: {student.GPA}");
+// Invalid age — should throw
+try
+{
+    student.Age = 15;
+}
+catch (ArgumentOutOfRangeException ex)
+{
+    Console.WriteLine($"Caught: {ex.Message}");
+}
+// Invalid GPA — should throw
+try
+{
+    student.GPA = 4.5m;
+}
+catch (ArgumentOutOfRangeException ex)
+{
+    Console.WriteLine($"Caught: {ex.Message}");
+}
