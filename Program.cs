@@ -80,18 +80,46 @@
 //     Console.WriteLine($"Caught: {ex.Message}");
 // }
 
-void PrintGradeReport(IEnumerable<IGradable> assessments)
+// void PrintGradeReport(IEnumerable<IGradable> assessments)
+// {
+//     Console.WriteLine("--- Grade Report---");
+//     foreach (var item in assessments)
+//     {
+//         Console.WriteLine($"{item.Title}: {item.CalculateGrade():F2}%");
+//     }
+//     }
+//     // Test it — one array holds two completely different types
+//     IGradable[] cohortAssessments = [
+//         new Quiz { Title = "C# Basics", CorrectAnswers = 18, TotalQuestions = 20 },
+//         new LabAssignment { Title = "Registration API", FunctionalityScore = 90m, CodeQualityScore =
+//         85m}
+// ];
+// PrintGradeReport(cohortAssessments);
+
+var service = new EnrollmentService();
+// Test 1: Valid registration
+var validStudent = new Student { Id = "S1", Name = "Abeba", Age = 20, GPA = 3.8m };
+var validCourse = new Course { Code = "CS-401", Title = "Advanced C#", Capacity = 30 };
+var result = service.ProcessRegistration(validStudent, validCourse);
+Console.WriteLine($"Enrolled: {result.StudentId} in {result.CourseCode}");
+
+// Test 2: Null student should throw
+try
 {
-Console.WriteLine("--- Grade Report---");
-foreach (var item in assessments)
+    service.ProcessRegistration(null, validCourse);
+}
+catch (ArgumentNullException ex)
 {
-Console.WriteLine($"{item.Title}: {item.CalculateGrade():F2}%");
+Console.WriteLine($"Guard caught: {ex.ParamName} /t {ex.Message}");
 }
+
+var fullCourse = new Course { Code = "CS-402", Title = "Full Course", Capacity = 1 };
+fullCourse.EnrolledCount = 1;
+try
+{
+    service.ProcessRegistration(validStudent, fullCourse);
 }
-// Test it — one array holds two completely different types
-IGradable[] cohortAssessments = [
-new Quiz { Title = "C# Basics", CorrectAnswers = 18, TotalQuestions = 20 },
-new LabAssignment { Title = "Registration API", FunctionalityScore = 90m, CodeQualityScore =
-85m}
-];
-PrintGradeReport(cohortAssessments);
+catch (InvalidOperationException ex)
+{
+Console.WriteLine($"Business rule: {ex.Message}");
+}
