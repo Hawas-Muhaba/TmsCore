@@ -176,103 +176,117 @@
 
 // Console.WriteLine($"\nFull curriculum: {string.Join(", ", allCourses)}");
 
-using System.Diagnostics;
-// Simulate 5 database calls, each taking 300ms
-// THE WRONGWAY:Blocking withThread.Sleep
-var sw =Stopwatch.StartNew();
-for (int i = 0; i < 5; i++)
-{
-Thread.Sleep(300); // Thread is HELD for 300ms cannot serve anyone else
-}
-Console.WriteLine($"Blocking sequential: {sw.ElapsedMilliseconds}ms");
-// ASYNC BUTSTILL SEQUENTIAL: Thread released, but calls are one-at-a-time
-sw.Restart();
-for (int i = 0; i < 5; i++)
-{
-await Task.Delay(300); // Thread released while waiting but still sequential
-}
-Console.WriteLine($"Async sequential: {sw.ElapsedMilliseconds}ms");
+// using System.Diagnostics;
+// // Simulate 5 database calls, each taking 300ms
+// // THE WRONGWAY:Blocking withThread.Sleep
+// var sw =Stopwatch.StartNew();
+// for (int i = 0; i < 5; i++)
+// {
+// Thread.Sleep(300); // Thread is HELD for 300ms cannot serve anyone else
+// }
+// Console.WriteLine($"Blocking sequential: {sw.ElapsedMilliseconds}ms");
+// // ASYNC BUTSTILL SEQUENTIAL: Thread released, but calls are one-at-a-time
+// sw.Restart();
+// for (int i = 0; i < 5; i++)
+// {
+// await Task.Delay(300); // Thread released while waiting but still sequential
+// }
+// Console.WriteLine($"Async sequential: {sw.ElapsedMilliseconds}ms");
 
-sw.Restart();
-var tasks = Enumerable.Range(0, 5).Select(_ => Task.Delay(300));
-await Task.WhenAll(tasks);
-Console.WriteLine($"Async parallel: {sw.ElapsedMilliseconds}ms");
+// sw.Restart();
+// var tasks = Enumerable.Range(0, 5).Select(_ => Task.Delay(300));
+// await Task.WhenAll(tasks);
+// Console.WriteLine($"Async parallel: {sw.ElapsedMilliseconds}ms");
 
-async Task<Student> FetchStudentAsync(string id)
-{
-    Console.WriteLine($" Fetching {id}...");
-    await Task.Delay(300); // Simulate database latency
-    return new Student
-    {
-        Id = id,
-        Name=$"Student-{id}",
-        Age = 20,
-        GPA=id switch
-    {
-        "S1" => 3.8m,
-        "S2" => 2.4m,
-        "S3" => 3.5m,
-        "S4" => 1.9m,
-        "S5" => 3.2m,
-        _ =>2.5m
-    }
-    };
-}
+// async Task<Student> FetchStudentAsync(string id)
+// {
+//     Console.WriteLine($" Fetching {id}...");
+//     await Task.Delay(300); // Simulate database latency
+//     return new Student
+//     {
+//         Id = id,
+//         Name=$"Student-{id}",
+//         Age = 20,
+//         GPA=id switch
+//     {
+//         "S1" => 3.8m,
+//         "S2" => 2.4m,
+//         "S3" => 3.5m,
+//         "S4" => 1.9m,
+//         "S5" => 3.2m,
+//         _ =>2.5m
+//     }
+//     };
+// }
 
-async Task<Course> FetchCourseAsync(string code)
-{
-    Console.WriteLine($" Fetching course {code}...");
-    await Task.Delay(200); // Simulate database latency
-    return new Course
-    {
-        Code = code,
-        Title = $"Course-{code}",
-        Capacity = code switch
-        {
-        "CRS-101" => 2,
-        "CRS-201" => 30,
-        "CRS-301" => 15,
-        _ =>25
-        }
-    };
-    
-}
+// async Task<Course> FetchCourseAsync(string code)
+// {
+//     Console.WriteLine($" Fetching course {code}...");
+//     await Task.Delay(200); // Simulate database latency
+//     return new Course
+//     {
+//         Code = code,
+//         Title = $"Course-{code}",
+//         Capacity = code switch
+//         {
+//         "CRS-101" => 2,
+//         "CRS-201" => 30,
+//         "CRS-301" => 15,
+//         _ =>25
+//         }
+//     };
 
-string[] studentIds = ["S1", "S2", "S3", "S4", "S5"];
-string[] courseCodes = ["CRS-101", "CRS-201", "CRS-301"];
+// }
 
-var studentTasks = studentIds.Select(id=> FetchStudentAsync(id));
-var courseTasks = courseCodes.Select(code=> FetchCourseAsync(code));
+// string[] studentIds = ["S1", "S2", "S3", "S4", "S5"];
+// string[] courseCodes = ["CRS-101", "CRS-201", "CRS-301"];
 
-Student[] students = await Task.WhenAll(studentTasks);
-Course[] courses = await Task.WhenAll(courseTasks);
+// var studentTasks = studentIds.Select(id=> FetchStudentAsync(id));
+// var courseTasks = courseCodes.Select(code=> FetchCourseAsync(code));
 
-Console.WriteLine($"\n\nLoaded {students.Length} students and {courses.Length} courses in {sw.ElapsedMilliseconds}ms");
-foreach (var student in students){
-    Console.WriteLine($"- {student.Name}, Age: {student.Age}, GPA: {student.GPA}");
-}
+// Student[] students = await Task.WhenAll(studentTasks);
+// Course[] courses = await Task.WhenAll(courseTasks);
+
+// Console.WriteLine($"\n\nLoaded {students.Length} students and {courses.Length} courses in {sw.ElapsedMilliseconds}ms");
+// foreach (var student in students){
+//     Console.WriteLine($"- {student.Name}, Age: {student.Age}, GPA: {student.GPA}");
+// }
 
 var enrollCourse = new Course { Code = "CRS-101", Title = "C# Mastery", Capacity = 2 };
 var enrollService = new EnrollmentService();
 var enrollments = new List<EnrollmentRecord>();
 var failures = new List<string>();
 
-sw.Restart();
-foreach (var student in students)
-{
-    try
-    {
-        var enrollment = enrollService.ProcessRegistration(student, enrollCourse);
-        enrollCourse.EnrolledCount++;
-        enrollments.Add(enrollment);
-        Console.WriteLine($"Enrolled {student.Name} in {enrollCourse.Title}");
-    }
-    catch (InvalidOperationException ex)
-    {
-        failures.Add($"Failed to enroll {student.Name}: {ex.Message}");
-        Console.WriteLine($" Rejected: {student.Name} {ex.Message}");
-    }
-}
+// sw.Restart();
+// foreach (var student in students)
+// {
+//     try
+//     {
+//         var enrollment = enrollService.ProcessRegistration(student, enrollCourse);
+//         enrollCourse.EnrolledCount++;
+//         enrollments.Add(enrollment);
+//         Console.WriteLine($"Enrolled {student.Name} in {enrollCourse.Title}");
+//     }
+//     catch (InvalidOperationException ex)
+//     {
+//         failures.Add($"Failed to enroll {student.Name}: {ex.Message}");
+//         Console.WriteLine($" Rejected: {student.Name} {ex.Message}");
+//     }
+// }
 
-failures.ForEach(f => Console.WriteLine(f));
-Console.WriteLine($"\nEnrollment process completed in {sw.ElapsedMilliseconds}ms with {enrollments.Count} enrollments and {failures.Count} failures.");
+// failures.ForEach(f => Console.WriteLine(f));
+// Console.WriteLine($"\nEnrollment process completed in {sw.ElapsedMilliseconds}ms with {enrollments.Count} enrollments and {failures.Count} failures.");
+
+try
+{
+    var overflowCourse = new Course { Code = "CRS-999", Title = "Overflow Test", Capacity = 0 };
+    enrollService.ProcessRegistration(
+    new Student { Id = "S99", Name = "Test", Age = 20, GPA = 3.0m },
+    overflowCourse);
+}
+catch (CapacityReachedException ex)
+{
+Console.WriteLine($"\nDomain exception caught:");
+Console.WriteLine($" Course: {ex.CourseCode}");
+Console.WriteLine($" Message: {ex.Message}");
+} 

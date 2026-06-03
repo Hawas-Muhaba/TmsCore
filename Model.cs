@@ -79,6 +79,7 @@ public class Quiz : IGradable
 }
 
 public class LabAssignment : IGradable
+
 {
     public required string Title {get; init;}
     public required decimal FunctionalityScore { get; init; }
@@ -87,5 +88,34 @@ public class LabAssignment : IGradable
     public decimal CalculateGrade()
     {
         return (FunctionalityScore * 0.7m) + (CodeQualityScore * 0.3m);
+    }
+}
+
+public class TmsDatabaseException : Exception
+{
+    public string Operation { get; }
+    public TmsDatabaseException(string operation, string message) : base(message)
+    {
+        Operation = operation;
+    }
+    public TmsDatabaseException(string operation, string message, Exception innerException) : base(message, innerException)
+    {
+        Operation = operation;
+    }
+}
+
+public class CapacityReachedException : InvalidOperationException
+{
+    public string CourseCode { get; }
+    public CapacityReachedException(string courseCode)
+    : base($"Course {courseCode} has reached maximum capacity.")
+    {
+        CourseCode = courseCode;
+    }
+    
+    public CapacityReachedException(string courseCode, Exception innerException)
+    : base($"Course {courseCode} has reached maximum capacity.", innerException)
+    {
+    CourseCode = courseCode;
     }
 }

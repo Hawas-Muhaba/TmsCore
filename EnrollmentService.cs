@@ -1,4 +1,5 @@
 public class EnrollmentService
+
 {
     public EnrollmentRecord ProcessRegistration(Student? student, Course? course)
     {
@@ -12,7 +13,7 @@ public class EnrollmentService
         }
         if (course.EnrolledCount >= course.Capacity)
         {
-            throw new InvalidOperationException($"Course {course.Code} is at full capacity.");
+            throw new CapacityReachedException(course.Code);
         }
         
 
@@ -29,3 +30,4 @@ public class EnrollmentService
 
     
 }
+
